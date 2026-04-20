@@ -13,17 +13,17 @@ import java.util.List;
 public class BankingGUI {
 
     // ── Palette ──────────────────────────────────────────────────────
-    static final Color C_BG      = new Color(0xD6CFC2);
-    static final Color C_SURFACE = new Color(0xCBC4B7);
-    static final Color C_CARD    = new Color(0xC8C0B2);
-    static final Color C_BORDER  = new Color(0xB0A090);
-    static final Color C_GOLD    = new Color(0xC8960C);
-    static final Color C_GOLD2   = new Color(0xE8B020);
-    static final Color C_GREEN   = new Color(0xC8960C);
-    static final Color C_RED     = new Color(0xCC1A1A);
-    static final Color C_TEXT    = new Color(0x1A1A1A);
-    static final Color C_MUTED   = new Color(0x8A6A2A);
-    static final Color C_FIELD   = new Color(0xBEB6A8);
+    static final Color C_BG      = new Color(0x0F0F13);
+    static final Color C_SURFACE = new Color(0x17171E);
+    static final Color C_CARD    = new Color(0x1E1E28);
+    static final Color C_BORDER  = new Color(0x2A2A38);
+    static final Color C_GOLD    = new Color(0xD4A853);
+    static final Color C_GOLD2   = new Color(0xF0C97A);
+    static final Color C_GREEN   = new Color(0x4ADE80);
+    static final Color C_RED     = new Color(0xFF6B6B);
+    static final Color C_TEXT    = new Color(0xF0F0F5);
+    static final Color C_MUTED   = new Color(0x7878A0);
+    static final Color C_FIELD   = new Color(0x12121A);
 
     // ── State ────────────────────────────────────────────────────────
     private AccountManager manager = new AccountManager();
@@ -55,7 +55,7 @@ public class BankingGUI {
     //  AUTH WINDOW
     // ════════════════════════════════════════════════════════════════
     private void showAuthWindow() {
-        mainFrame = buildFrame("NeoBank", 480, 640);
+        mainFrame = buildFrame("NeoBank", 540, 700);
 
         JPanel root = new JPanel() {
             protected void paintComponent(Graphics g) {
@@ -253,7 +253,7 @@ public class BankingGUI {
     //  DASHBOARD
     // ════════════════════════════════════════════════════════════════
     private void showDashboard() {
-        mainFrame = buildFrame("NeoBank — " + loggedIn.getName(), 880, 580);
+        mainFrame = buildFrame("NeoBank — " + loggedIn.getName(), 960, 660);
 
         JPanel root = new JPanel(new BorderLayout(0, 0));
         root.setBackground(C_BG);
@@ -679,7 +679,7 @@ public class BankingGUI {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             RoundRectangle2D rr = new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 14, 14);
-            g2.setColor(hovered ? new Color(0xBBB0A0) : C_CARD);
+            g2.setColor(hovered ? new Color(0x252533) : C_CARD);
             g2.fill(rr);
             g2.setColor(hovered ? C_GOLD : C_BORDER);
             g2.setStroke(new BasicStroke(1f));
@@ -706,7 +706,7 @@ public class BankingGUI {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setPaint(new GradientPaint(0, 0, C_GOLD, 44, 44, C_GOLD2));
             g2.fillOval(0, 0, 44, 44);
-            g2.setColor(Color.WHITE);
+            g2.setColor(C_BG);
             g2.setFont(new Font("Segoe UI", Font.BOLD, 16));
             FontMetrics fm = g2.getFontMetrics();
             g2.drawString(text, (44 - fm.stringWidth(text)) / 2, (44 - fm.getHeight()) / 2 + fm.getAscent());
@@ -821,7 +821,7 @@ public class BankingGUI {
             super(text);
             this.overrideBg = bg;
             setFont(new Font("Segoe UI", Font.BOLD, 11));
-            setForeground(Color.WHITE);
+            setForeground(bg == null ? C_BG : Color.WHITE);
             setFocusPainted(false); setBorderPainted(false);
             setContentAreaFilled(false); setOpaque(false);
             setBorder(new EmptyBorder(12, 30, 12, 30));
@@ -875,7 +875,7 @@ public class BankingGUI {
                         if (selected == idx) {
                             g2.setPaint(new GradientPaint(0, 0, C_GOLD2, getWidth(), getHeight(), C_GOLD));
                             g2.fillRoundRect(0, 0, getWidth(), getHeight(), 6, 6);
-                            setForeground(Color.WHITE);
+                            setForeground(C_BG);
                         } else {
                             setForeground(C_MUTED);
                         }
@@ -917,6 +917,7 @@ public class BankingGUI {
         JFrame f = new JFrame(title);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(w, h); f.setMinimumSize(new Dimension(w, h));
+        f.setResizable(false);
         f.setLocationRelativeTo(null);
         return f;
     }
