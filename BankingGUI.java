@@ -1,3 +1,5 @@
+/* kapoy na kaayo ko WAHAHAHAHAHAHAHAHAHHA LISODA MAG FRONTEND PAG JAVA UY */
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
@@ -55,7 +57,7 @@ public class BankingGUI {
     //  AUTH WINDOW
     // ════════════════════════════════════════════════════════════════
     private void showAuthWindow() {
-        mainFrame = buildFrame("NeoBank", 540, 700);
+        mainFrame = buildFrame("Banko C1ntral", 540, 700);
 
         JPanel root = new JPanel() {
             protected void paintComponent(Graphics g) {
@@ -80,7 +82,7 @@ public class BankingGUI {
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         header.setBorder(new EmptyBorder(52, 0, 30, 0));
 
-        JLabel wordmark = new JLabel("NEOBANK", SwingConstants.CENTER);
+        JLabel wordmark = new JLabel("BANKO C1NTRAL", SwingConstants.CENTER);
         wordmark.setFont(new Font("Segoe UI", Font.BOLD, 30));
         wordmark.setForeground(C_GOLD);
         wordmark.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -127,59 +129,99 @@ public class BankingGUI {
         mainFrame.setVisible(true);
     }
 
-    // ── Login Panel ───────────────────────────────────────────────────
-    private JPanel buildLoginPanel() {
-        JPanel p = new JPanel() {
-            public Dimension getPreferredSize() { return new Dimension(300, super.getPreferredSize().height); }
-        };
-        p.setOpaque(false);
-        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-        p.setBorder(new EmptyBorder(28, 8, 28, 8));
+// BankingGUI.java
 
-        JLabel sub = mkLabel("Sign in to your account", 12, Font.PLAIN, C_MUTED);
-        sub.setAlignmentX(Component.CENTER_ALIGNMENT);
+// ── Login Panel ───────────────────────────────────────────────────
+private JPanel buildLoginPanel() {
+    JPanel p = new JPanel() {
+        public Dimension getPreferredSize() { return new Dimension(300, super.getPreferredSize().height); }
+    };
+    p.setOpaque(false);
+    p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+    p.setBorder(new EmptyBorder(28, 8, 28, 8));
 
-        JTextField accField = modernField();
-        accField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JPasswordField pinField = modernPassField();
-        pinField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel errLabel = mkLabel("", 11, Font.PLAIN, C_RED);
-        errLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JLabel sub = mkLabel("Sign in to your account", 12, Font.PLAIN, C_MUTED);
+    sub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        GoldButton loginBtn = new GoldButton("SIGN IN", null);
-        loginBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JTextField accField = modernField();
+    accField.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JPasswordField pinField = modernPassField();
+    pinField.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JLabel errLabel = mkLabel("", 11, Font.PLAIN, C_RED);
+    errLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        loginBtn.addActionListener(e -> {
-            String accStr = accField.getText().trim();
-            String pin = new String(pinField.getPassword()).trim();
-            if (accStr.isEmpty() || pin.isEmpty()) { errLabel.setText("Please fill in all fields."); return; }
-            int accNum;
-            try { accNum = Integer.parseInt(accStr); }
-            catch (NumberFormatException ex) { errLabel.setText("Invalid account number."); return; }
-            Account acc = manager.getAccount(accNum);
-            if (acc == null)              { errLabel.setText("Account not found."); return; }
-            if (!acc.getPin().equals(pin)){ errLabel.setText("Incorrect PIN."); return; }
-            loggedIn = acc;
-            mainFrame.dispose();
-            showDashboard();
-        });
+    GoldButton loginBtn = new GoldButton("SIGN IN", null);
+    loginBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        p.add(sub);
-        p.add(Box.createVerticalStrut(26));
+    // ************************************************************
+    // START OF UPDATED LOGIN LOGIC
+    // ************************************************************
+    loginBtn.addActionListener(e -> {
+        // Read the input as a String, since it could be Name OR Number now.
+        String userInput = accField.getText().trim();
+        String pin = new String(pinField.getPassword()).trim();
+        
+        // Basic validation
+        if (userInput.isEmpty() || pin.isEmpty()) { 
+            errLabel.setText("Please fill in all fields."); 
+            return; 
+        }
 
-        JLabel accLbl = capsLabel("ACCOUNT NUMBER"); accLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel pinLbl = capsLabel("PIN");             pinLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // --- Try Login by Account Number ---
+        Account acc = null;
+        try {
+            // First, try to interpret the input as an integer (Account Number)
+            int accNum = Integer.parseInt(userInput);
+            // If successful, search by account number
+            acc = manager.getAccount(accNum);
+        } catch (NumberFormatException ex) {
+            // If it's not a number, it's likely a name. Do nothing yet.
+        }
 
-        p.add(accLbl); p.add(Box.createVerticalStrut(6)); p.add(accField);
-        p.add(Box.createVerticalStrut(14));
-        p.add(pinLbl); p.add(Box.createVerticalStrut(6)); p.add(pinField);
-        p.add(Box.createVerticalStrut(10));
-        p.add(errLabel);
-        p.add(Box.createVerticalStrut(22));
-        p.add(loginBtn);
+  
+        if (acc == null) {
+            // Search by full name (requires the helper method added in Step 1)
+            acc = manager.getAccountByName(userInput);
+        }
 
-        return p;
-    }
+        // --- Handle Login Result ---
+        // At this point, if acc is still null, neither search worked.
+        if (acc == null) {
+            errLabel.setText("Account not found."); 
+            return; 
+        }
+
+        // Proceed with PIN validation
+        if (!acc.getPin().equals(pin)){ 
+            errLabel.setText("Incorrect PIN."); 
+            return; 
+        }
+        
+        // Successful login
+        loggedIn = acc;
+        mainFrame.dispose();
+        showDashboard();
+    });
+
+    p.add(sub);
+    p.add(Box.createVerticalStrut(26));
+    JLabel accLbl = capsLabel("ACCOUNT NUMBER OR FULL NAME");
+    accLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+    // -------------------------------------------
+    
+    JLabel pinLbl = capsLabel("PIN");             pinLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    p.add(accLbl); p.add(Box.createVerticalStrut(6)); p.add(accField);
+    p.add(Box.createVerticalStrut(14));
+    p.add(pinLbl); p.add(Box.createVerticalStrut(6)); p.add(pinField);
+    p.add(Box.createVerticalStrut(10));
+    p.add(errLabel);
+    p.add(Box.createVerticalStrut(22));
+    p.add(loginBtn);
+
+    return p;
+}
+
 
     // ── Create Account Panel ──────────────────────────────────────────
     private JPanel buildCreateAccountPanel() {
@@ -253,7 +295,7 @@ public class BankingGUI {
     //  DASHBOARD
     // ════════════════════════════════════════════════════════════════
     private void showDashboard() {
-        mainFrame = buildFrame("NeoBank — " + loggedIn.getName(), 960, 660);
+        mainFrame = buildFrame("Banko C1ntral — " + loggedIn.getName(), 960, 660);
 
         JPanel root = new JPanel(new BorderLayout(0, 0));
         root.setBackground(C_BG);
@@ -283,7 +325,7 @@ public class BankingGUI {
         logoArea.setLayout(new BoxLayout(logoArea, BoxLayout.Y_AXIS));
         logoArea.setBorder(new EmptyBorder(30, 22, 22, 22));
         logoArea.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JLabel logo = mkLabel("NEOBANK", 18, Font.BOLD, C_GOLD);
+        JLabel logo = mkLabel("BANKO C1NTRAL", 18, Font.BOLD, C_GOLD);
         logo.setAlignmentX(Component.LEFT_ALIGNMENT);
         JLabel sub = mkLabel("Personal Banking", 10, Font.PLAIN, C_MUTED);
         sub.setAlignmentX(Component.LEFT_ALIGNMENT);

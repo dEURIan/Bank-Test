@@ -136,42 +136,56 @@ public class AccountManager {
         return true;
     }
 
-    public Account login(Scanner sc) {
-        System.out.print("Enter Account Number: ");
-        int accNum;
-        
-        try{
-            accNum = Integer.parseInt(sc.nextLine());
-        } catch (NumberFormatException e){
-            System.out.println("Invalid account number.");
-            return null;
-        }
-        
-        Account acc = getAccount(accNum);
-        
-        if (acc == null){
-            System.out.println("Account not found.");
-            return null;
-        }
-        
-        int attempts = 1;
-        
-        do{
-            System.out.print("Enter PIN: ");
-            String pin = sc.nextLine();
-            
-            if (acc.getPin().equals(pin)){
-                System.out.println("Login successful!");
-                return acc;
-            } else{
-                System.out.println("Invalid PIN.");
-                attempts++;
-            }
-        } while (attempts <= 3);
-        
-        System.out.println("You have been locked out.");
+// Replace the existing login method in AccountManager.java with this version:
+
+public Account login(Scanner sc) {
+
+    System.out.print("Enter Account Number or Full Name: ");
+    String input = sc.nextLine().trim(); 
+    
+    Account acc = null;
+
+    try {
+        int accNum = Integer.parseInt(input);
+        acc = getAccount(accNum); // Search by number
+    } catch (NumberFormatException e) {
+        // checks for name
+        acc = getAccountByName(input); 
+    }
+    
+    if (acc == null) {
+        System.out.println("Account not found.");
         return null;
     }
+    
+    int attempts = 1;
+    
+    do {
+        System.out.print("Enter PIN: ");
+        String pin = sc.nextLine();
+        
+        if (acc.getPin().equals(pin)) {
+            System.out.println("Login successful!");
+            return acc;
+        } else {
+            System.out.println("Invalid PIN.");
+            attempts++;
+        }
+    } while (attempts <= 3);
+    
+    System.out.println("You have been locked out.");
+    return null;
+}
+
+//helper for name 
+Account getAccountByName(String name) {
+    for (int i = 0; i < count; i++) {
+        if (accounts[i].getName().equalsIgnoreCase(name)) {
+            return accounts[i];
+        }
+    }
+    return null;
+}
     
     public void loadFromFile(){
         try (BufferedReader br = new BufferedReader(new FileReader("accounts.txt"))) {
