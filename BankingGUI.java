@@ -13,17 +13,17 @@ import java.util.List;
 public class BankingGUI {
 
     // ── Palette ──────────────────────────────────────────────────────
-    static final Color C_BG      = new Color(0x0F0F13);
-    static final Color C_SURFACE = new Color(0x17171E);
-    static final Color C_CARD    = new Color(0x1E1E28);
-    static final Color C_BORDER  = new Color(0x2A2A38);
-    static final Color C_GOLD    = new Color(0xD4A853);
-    static final Color C_GOLD2   = new Color(0xF0C97A);
-    static final Color C_GREEN   = new Color(0x4ADE80);
-    static final Color C_RED     = new Color(0xFF6B6B);
-    static final Color C_TEXT    = new Color(0xF0F0F5);
-    static final Color C_MUTED   = new Color(0x7878A0);
-    static final Color C_FIELD   = new Color(0x12121A);
+    static final Color C_BG      = new Color(0xD6CFC2);
+    static final Color C_SURFACE = new Color(0xCBC4B7);
+    static final Color C_CARD    = new Color(0xC8C0B2);
+    static final Color C_BORDER  = new Color(0xB0A090);
+    static final Color C_GOLD    = new Color(0xC8960C);
+    static final Color C_GOLD2   = new Color(0xE8B020);
+    static final Color C_GREEN   = new Color(0xC8960C);
+    static final Color C_RED     = new Color(0xCC1A1A);
+    static final Color C_TEXT    = new Color(0x1A1A1A);
+    static final Color C_MUTED   = new Color(0x8A6A2A);
+    static final Color C_FIELD   = new Color(0xBEB6A8);
 
     // ── State ────────────────────────────────────────────────────────
     private AccountManager manager = new AccountManager();
@@ -129,16 +129,20 @@ public class BankingGUI {
 
     // ── Login Panel ───────────────────────────────────────────────────
     private JPanel buildLoginPanel() {
-        JPanel p = new JPanel();
+        JPanel p = new JPanel() {
+            public Dimension getPreferredSize() { return new Dimension(300, super.getPreferredSize().height); }
+        };
         p.setOpaque(false);
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-        p.setBorder(new EmptyBorder(28, 0, 28, 0));
+        p.setBorder(new EmptyBorder(28, 8, 28, 8));
 
         JLabel sub = mkLabel("Sign in to your account", 12, Font.PLAIN, C_MUTED);
         sub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JTextField accField = modernField();
+        accField.setAlignmentX(Component.CENTER_ALIGNMENT);
         JPasswordField pinField = modernPassField();
+        pinField.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel errLabel = mkLabel("", 11, Font.PLAIN, C_RED);
         errLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -162,27 +166,34 @@ public class BankingGUI {
 
         p.add(sub);
         p.add(Box.createVerticalStrut(26));
-        p.add(capsLabel("ACCOUNT NUMBER")); p.add(Box.createVerticalStrut(6)); p.add(accField);
+
+        JLabel accLbl = capsLabel("ACCOUNT NUMBER"); accLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel pinLbl = capsLabel("PIN");             pinLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        p.add(accLbl); p.add(Box.createVerticalStrut(6)); p.add(accField);
         p.add(Box.createVerticalStrut(14));
-        p.add(capsLabel("PIN")); p.add(Box.createVerticalStrut(6)); p.add(pinField);
+        p.add(pinLbl); p.add(Box.createVerticalStrut(6)); p.add(pinField);
         p.add(Box.createVerticalStrut(10));
         p.add(errLabel);
         p.add(Box.createVerticalStrut(22));
         p.add(loginBtn);
+
         return p;
     }
 
     // ── Create Account Panel ──────────────────────────────────────────
     private JPanel buildCreateAccountPanel() {
-        JPanel p = new JPanel();
+        JPanel p = new JPanel() {
+            public Dimension getPreferredSize() { return new Dimension(300, super.getPreferredSize().height); }
+        };
         p.setOpaque(false);
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-        p.setBorder(new EmptyBorder(20, 0, 20, 0));
+        p.setBorder(new EmptyBorder(20, 8, 20, 8));
 
-        JTextField nameField  = modernField();
-        JTextField bdField    = modernField();
-        JPasswordField pinField = modernPassField();
-        JTextField balField   = modernField();
+        JTextField nameField  = modernField(); nameField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JTextField bdField    = modernField(); bdField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPasswordField pinField = modernPassField(); pinField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JTextField balField   = modernField(); balField.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel statusLabel    = mkLabel("", 11, Font.PLAIN, C_GREEN);
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -218,17 +229,23 @@ public class BankingGUI {
             statusLabel.setText("Account #" + accNum + " created!");
         });
 
-        p.add(capsLabel("FULL NAME"));      p.add(Box.createVerticalStrut(6)); p.add(nameField);
+        JLabel nameLbl = capsLabel("FULL NAME");               nameLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel bdLbl   = capsLabel("BIRTHDATE (YYYY-MM-DD)");  bdLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel pinLbl  = capsLabel("PIN");                     pinLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel balLbl  = capsLabel("INITIAL DEPOSIT (PHP)");   balLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        p.add(nameLbl); p.add(Box.createVerticalStrut(6)); p.add(nameField);
         p.add(Box.createVerticalStrut(12));
-        p.add(capsLabel("BIRTHDATE (YYYY-MM-DD)")); p.add(Box.createVerticalStrut(6)); p.add(bdField);
+        p.add(bdLbl);   p.add(Box.createVerticalStrut(6)); p.add(bdField);
         p.add(Box.createVerticalStrut(12));
-        p.add(capsLabel("PIN"));            p.add(Box.createVerticalStrut(6)); p.add(pinField);
+        p.add(pinLbl);  p.add(Box.createVerticalStrut(6)); p.add(pinField);
         p.add(Box.createVerticalStrut(12));
-        p.add(capsLabel("INITIAL DEPOSIT (PHP)")); p.add(Box.createVerticalStrut(6)); p.add(balField);
+        p.add(balLbl);  p.add(Box.createVerticalStrut(6)); p.add(balField);
         p.add(Box.createVerticalStrut(10));
         p.add(statusLabel);
         p.add(Box.createVerticalStrut(18));
         p.add(createBtn);
+
         return p;
     }
 
@@ -302,7 +319,7 @@ public class BankingGUI {
 
         // Nav buttons
         String[][] items = {
-            {"◈","Overview"},{"↑","Deposit"},{"↓","Withdraw"},{"≡","History"},{"⬡","Report"}
+            {"","Overview"},{"","Deposit"},{"","Withdraw"},{"","History"},{"","Report"}
         };
         navButtons.clear();
         JPanel navPanel = new JPanel();
@@ -346,7 +363,7 @@ public class BankingGUI {
         logoutArea.setAlignmentX(Component.LEFT_ALIGNMENT);
         logoutArea.add(Box.createVerticalStrut(10)); logoutArea.add(sep); logoutArea.add(Box.createVerticalStrut(12));
 
-        NavButton logoutBtn = new NavButton("⏻", "Sign Out");
+        NavButton logoutBtn = new NavButton("x", "Sign Out");
         logoutBtn.setDanger(true);
         logoutBtn.addActionListener(e -> { loggedIn = null; mainFrame.dispose(); showAuthWindow(); });
         logoutArea.add(logoutBtn);
@@ -415,7 +432,7 @@ public class BankingGUI {
         actions.setBorder(new EmptyBorder(16, 0, 0, 0));
         actions.add(quickCard("↑", "Deposit",  "Add funds",    C_GREEN,  "Deposit"));
         actions.add(quickCard("↓", "Withdraw", "Take out cash", C_RED,   "Withdraw"));
-        actions.add(quickCard("≡", "History",  "View activity", C_GOLD,  "History"));
+        actions.add(quickCard("=", "History",  "View activity", C_GOLD,  "History"));
 
         JPanel center = new JPanel();
         center.setOpaque(false);
@@ -474,7 +491,8 @@ public class BankingGUI {
 
         JLabel ico = mkLabel("↑", 30, Font.BOLD, C_GREEN); ico.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel sub = mkLabel("Add money to your account", 12, Font.PLAIN, C_MUTED); sub.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JTextField amtField = modernField();
+        JTextField amtField = modernField(); amtField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel amtLbl = capsLabel("AMOUNT (PHP)"); amtLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel status = mkLabel("", 11, Font.PLAIN, C_GREEN); status.setAlignmentX(Component.CENTER_ALIGNMENT);
         GoldButton btn = new GoldButton("DEPOSIT FUNDS", C_GREEN); btn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -492,7 +510,7 @@ public class BankingGUI {
 
         card.add(ico); card.add(Box.createVerticalStrut(4));
         card.add(sub); card.add(Box.createVerticalStrut(28));
-        card.add(capsLabel("AMOUNT (PHP)")); card.add(Box.createVerticalStrut(6)); card.add(amtField);
+        card.add(amtLbl); card.add(Box.createVerticalStrut(6)); card.add(amtField);
         card.add(Box.createVerticalStrut(8)); card.add(status);
         card.add(Box.createVerticalStrut(20)); card.add(btn);
         center.add(card); outer.add(center, BorderLayout.CENTER);
@@ -513,7 +531,8 @@ public class BankingGUI {
 
         JLabel ico = mkLabel("↓", 30, Font.BOLD, C_RED); ico.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel sub = mkLabel("Withdraw from your account", 12, Font.PLAIN, C_MUTED); sub.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JTextField amtField = modernField();
+        JTextField amtField = modernField(); amtField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel amtLbl = capsLabel("AMOUNT (PHP)"); amtLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel status = mkLabel("", 11, Font.PLAIN, C_RED); status.setAlignmentX(Component.CENTER_ALIGNMENT);
         GoldButton btn = new GoldButton("WITHDRAW FUNDS", C_RED); btn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -532,7 +551,7 @@ public class BankingGUI {
 
         card.add(ico); card.add(Box.createVerticalStrut(4));
         card.add(sub); card.add(Box.createVerticalStrut(28));
-        card.add(capsLabel("AMOUNT (PHP)")); card.add(Box.createVerticalStrut(6)); card.add(amtField);
+        card.add(amtLbl); card.add(Box.createVerticalStrut(6)); card.add(amtField);
         card.add(Box.createVerticalStrut(8)); card.add(status);
         card.add(Box.createVerticalStrut(20)); card.add(btn);
         center.add(card); outer.add(center, BorderLayout.CENTER);
@@ -625,7 +644,7 @@ public class BankingGUI {
         card.setBorder(new EmptyBorder(36, 44, 36, 44));
         card.setPreferredSize(new Dimension(400, 280));
 
-        JLabel ico = mkLabel("⬡", 32, Font.BOLD, C_GOLD); ico.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel ico = mkLabel("*", 32, Font.BOLD, C_GOLD); ico.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel title = mkLabel("Bank Statement", 16, Font.BOLD, C_TEXT); title.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel sub = mkLabel("Exports a report to BankReport.txt", 11, Font.PLAIN, C_MUTED); sub.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel status = mkLabel("", 11, Font.PLAIN, C_GREEN); status.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -660,7 +679,7 @@ public class BankingGUI {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             RoundRectangle2D rr = new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 14, 14);
-            g2.setColor(hovered ? new Color(0x252533) : C_CARD);
+            g2.setColor(hovered ? new Color(0xBBB0A0) : C_CARD);
             g2.fill(rr);
             g2.setColor(hovered ? C_GOLD : C_BORDER);
             g2.setStroke(new BasicStroke(1f));
@@ -687,7 +706,7 @@ public class BankingGUI {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setPaint(new GradientPaint(0, 0, C_GOLD, 44, 44, C_GOLD2));
             g2.fillOval(0, 0, 44, 44);
-            g2.setColor(C_BG);
+            g2.setColor(Color.WHITE);
             g2.setFont(new Font("Segoe UI", Font.BOLD, 16));
             FontMetrics fm = g2.getFontMetrics();
             g2.drawString(text, (44 - fm.stringWidth(text)) / 2, (44 - fm.getHeight()) / 2 + fm.getAscent());
@@ -695,15 +714,16 @@ public class BankingGUI {
         }
     }
 
-    /** Sidebar nav button with active indicator */
     class NavButton extends JButton {
         private boolean active  = false;
         private boolean danger  = false;
         private final String lbl;
+        private final int iconType; // 0=grid, 1=up, 2=down, 3=lines, 4=doc, 5=power
 
         NavButton(String icon, String label) {
             this.lbl = label;
-            setText(icon + "   " + label);
+            this.iconType = iconIndex(label);
+            setText("        " + label); // left-pad to leave room for drawn icon
             setFont(new Font("Segoe UI", Font.PLAIN, 13));
             setForeground(C_MUTED);
             setFocusPainted(false); setBorderPainted(false);
@@ -717,6 +737,19 @@ public class BankingGUI {
                 public void mouseExited (MouseEvent e) { if (!active) setForeground(danger ? C_RED : C_MUTED); }
             });
         }
+
+        private int iconIndex(String label) {
+            switch (label) {
+                case "Overview": return 0;
+                case "Deposit":  return 1;
+                case "Withdraw": return 2;
+                case "History":  return 3;
+                case "Report":   return 4;
+                case "Sign Out": return 5;
+                default:         return 0;
+            }
+        }
+
         public String getLabel() { return lbl; }
         void setActive(boolean a) { active = a; setForeground(a ? C_GOLD : C_MUTED); repaint(); }
         void setDanger(boolean d) { danger = d; setForeground(C_RED); repaint(); }
@@ -725,13 +758,59 @@ public class BankingGUI {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             if (active) {
-                g2.setColor(new Color(212, 168, 83, 22));
+                g2.setColor(new Color(C_GOLD.getRed(), C_GOLD.getGreen(), C_GOLD.getBlue(), 40));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
                 g2.setColor(C_GOLD);
                 g2.fillRoundRect(0, (getHeight() - 20) / 2, 3, 20, 2, 2);
             }
+            // Draw icon
+            Color iconColor = danger ? C_RED : (active ? C_GOLD : C_MUTED);
+            g2.setColor(iconColor);
+            g2.setStroke(new BasicStroke(1.6f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            int ix = 20, iy = getHeight() / 2;
+            drawIcon(g2, iconType, ix, iy);
             g2.dispose();
             super.paintComponent(g);
+        }
+
+        private void drawIcon(Graphics2D g2, int type, int cx, int cy) {
+            int s = 7; // half-size
+            switch (type) {
+                case 0: // Overview: small grid 2x2
+                    g2.drawRect(cx - s, cy - s, s - 1, s - 1);
+                    g2.drawRect(cx + 1, cy - s, s - 1, s - 1);
+                    g2.drawRect(cx - s, cy + 1, s - 1, s - 1);
+                    g2.drawRect(cx + 1, cy + 1, s - 1, s - 1);
+                    break;
+                case 1: // Deposit: up arrow
+                    g2.drawLine(cx, cy - s, cx, cy + s);
+                    g2.drawLine(cx, cy - s, cx - s + 2, cy - 1);
+                    g2.drawLine(cx, cy - s, cx + s - 2, cy - 1);
+                    break;
+                case 2: // Withdraw: down arrow
+                    g2.drawLine(cx, cy + s, cx, cy - s);
+                    g2.drawLine(cx, cy + s, cx - s + 2, cy + 1);
+                    g2.drawLine(cx, cy + s, cx + s - 2, cy + 1);
+                    break;
+                case 3: // History: 3 horizontal lines
+                    g2.drawLine(cx - s, cy - 4, cx + s, cy - 4);
+                    g2.drawLine(cx - s, cy,     cx + s, cy);
+                    g2.drawLine(cx - s, cy + 4, cx + s, cy + 4);
+                    break;
+                case 4: // Report: document
+                    g2.drawRoundRect(cx - s + 1, cy - s, s * 2 - 2, s * 2, 2, 2);
+                    g2.drawLine(cx - s + 4, cy - 3, cx + s - 4, cy - 3);
+                    g2.drawLine(cx - s + 4, cy + 1, cx + s - 4, cy + 1);
+                    break;
+                case 5: // Sign Out: door with arrow
+                    // Door rectangle
+                    g2.drawRoundRect(cx - s, cy - s, s * 2, s * 2, 2, 2);
+                    // Arrow pointing right (exit)
+                    g2.drawLine(cx - 2, cy, cx + s - 2, cy);
+                    g2.drawLine(cx + s - 5, cy - 3, cx + s - 2, cy);
+                    g2.drawLine(cx + s - 5, cy + 3, cx + s - 2, cy);
+                    break;
+            }
         }
     }
 
@@ -742,7 +821,7 @@ public class BankingGUI {
             super(text);
             this.overrideBg = bg;
             setFont(new Font("Segoe UI", Font.BOLD, 11));
-            setForeground(bg == null ? C_BG : Color.WHITE);
+            setForeground(Color.WHITE);
             setFocusPainted(false); setBorderPainted(false);
             setContentAreaFilled(false); setOpaque(false);
             setBorder(new EmptyBorder(12, 30, 12, 30));
@@ -771,7 +850,7 @@ public class BankingGUI {
         AuthTabPanel(JPanel login, JPanel create) {
             panels = new JPanel[]{login, create};
             setOpaque(false);
-            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            setLayout(new BorderLayout(0, 12));
 
             // Tab bar
             JPanel bar = new JPanel(new GridLayout(1, 2, 0, 0)) {
@@ -796,7 +875,7 @@ public class BankingGUI {
                         if (selected == idx) {
                             g2.setPaint(new GradientPaint(0, 0, C_GOLD2, getWidth(), getHeight(), C_GOLD));
                             g2.fillRoundRect(0, 0, getWidth(), getHeight(), 6, 6);
-                            setForeground(C_BG);
+                            setForeground(Color.WHITE);
                         } else {
                             setForeground(C_MUTED);
                         }
@@ -813,23 +892,20 @@ public class BankingGUI {
             }
 
             holder = new GlassCard();
-            holder.setLayout(new BorderLayout());
+            holder.setLayout(new GridBagLayout());
 
-            add(bar);
-            add(Box.createVerticalStrut(12));
-            add(holder);
+            add(bar, BorderLayout.NORTH);
+            add(holder, BorderLayout.CENTER);
             swap();
         }
 
         private void swap() {
             holder.removeAll();
-            JScrollPane sp = new JScrollPane(panels[selected]);
-            sp.setOpaque(false); sp.getViewport().setOpaque(false);
-            sp.setBorder(new EmptyBorder(0, 24, 0, 24));
-            sp.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
-                protected void configureScrollBarColors() { thumbColor = C_BORDER; trackColor = C_CARD; }
-            });
-            holder.add(sp, BorderLayout.CENTER);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.weightx = 1.0;
+            gbc.weighty = 1.0;
+            holder.add(panels[selected], gbc);
             holder.revalidate(); holder.repaint();
         }
     }
