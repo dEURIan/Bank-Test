@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BankingGUI {
+public class Main {
 
     // ── Palette ──────────────────────────────────────────────────────
     static final Color C_BG      = new Color(0x0F0F13);
@@ -45,7 +45,7 @@ public class BankingGUI {
         SwingUtilities.invokeLater(() -> {
             try { UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); }
             catch (Exception ignored) {}
-            new BankingGUI().start();
+            new Main().start();
         });
     }
 

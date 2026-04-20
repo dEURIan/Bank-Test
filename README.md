@@ -1,1 +1,4 @@
-bank ui for CS 1-C
+Hello, to launch the gui open BankingGUI.java
+
+
+
