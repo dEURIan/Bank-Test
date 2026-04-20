@@ -140,7 +140,7 @@ private JPanel buildLoginPanel() {
     p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
     p.setBorder(new EmptyBorder(28, 8, 28, 8));
 
-    JLabel sub = mkLabel("Sign in to your account", 12, Font.PLAIN, C_MUTED);
+    JLabel sub = mkLabel("Sign in to your account", 16, Font.PLAIN, C_MUTED);
     sub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
     JTextField accField = modernField();
@@ -205,11 +205,11 @@ private JPanel buildLoginPanel() {
 
     p.add(sub);
     p.add(Box.createVerticalStrut(26));
-    JLabel accLbl = capsLabel("ACCOUNT NUMBER OR FULL NAME");
+    JLabel accLbl = mkLabel("ACCOUNT NUMBER OR FULL NAME", 12, Font.BOLD, C_MUTED);
     accLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
     // -------------------------------------------
     
-    JLabel pinLbl = capsLabel("PIN");             pinLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JLabel pinLbl = mkLabel("PIN", 12, Font.BOLD, C_MUTED); pinLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
     p.add(accLbl); p.add(Box.createVerticalStrut(6)); p.add(accField);
     p.add(Box.createVerticalStrut(14));
