@@ -44,12 +44,14 @@ public class AccountManager {
     }
 
     public boolean isEligible(String birthDate) {
+        if (!isValidBirthDate(birthDate)) return false; // sanitize
         LocalDate birth = LocalDate.parse(birthDate.trim());
         LocalDate today = LocalDate.now();
         int age = Period.between(birth, today).getYears();
         return age >= 18;
     }
 
+    // --- Core existing logic (No changes) ---
     public void createAccount(Scanner sc) {
         int accNum = generateAccountNumber();
 
@@ -122,6 +124,19 @@ public class AccountManager {
         return null;
     }
 
+    public Account getAccountByName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return null;
+        }
+        String trimmedName = name.trim();
+        for (int i = 0; i < count; i++) {
+            if (accounts[i].getName().equalsIgnoreCase(trimmedName)) {
+                return accounts[i];
+            }
+        }
+        return null; // No match found
+    }
+
     public boolean addAccount(int accNum, String name, double balance, String pin, String birthDate) {
         if (count >= accounts.length){
             System.out.println("Account limit reached.");
@@ -136,56 +151,43 @@ public class AccountManager {
         return true;
     }
 
-// Replace the existing login method in AccountManager.java with this version:
-
-public Account login(Scanner sc) {
-
-    System.out.print("Enter Account Number or Full Name: ");
-    String input = sc.nextLine().trim(); 
-    
-    Account acc = null;
-
-    try {
-        int accNum = Integer.parseInt(input);
-        acc = getAccount(accNum); // Search by number
-    } catch (NumberFormatException e) {
-        // checks for name
-        acc = getAccountByName(input); 
-    }
-    
-    if (acc == null) {
-        System.out.println("Account not found.");
+    // --- Core existing logic (No changes) ---
+    public Account login(Scanner sc) {
+        System.out.print("Enter Account Number: ");
+        int accNum;
+        
+        try{
+            accNum = Integer.parseInt(sc.nextLine());
+        } catch (NumberFormatException e){
+            System.out.println("Invalid account number.");
+            return null;
+        }
+        
+        Account acc = getAccount(accNum);
+        
+        if (acc == null){
+            System.out.println("Account not found.");
+            return null;
+        }
+        
+        int attempts = 1;
+        
+        do{
+            System.out.print("Enter PIN: ");
+            String pin = sc.nextLine();
+            
+            if (acc.getPin().equals(pin)){
+                System.out.println("Login successful!");
+                return acc;
+            } else{
+                System.out.println("Invalid PIN.");
+                attempts++;
+            }
+        } while (attempts <= 3);
+        
+        System.out.println("You have been locked out.");
         return null;
     }
-    
-    int attempts = 1;
-    
-    do {
-        System.out.print("Enter PIN: ");
-        String pin = sc.nextLine();
-        
-        if (acc.getPin().equals(pin)) {
-            System.out.println("Login successful!");
-            return acc;
-        } else {
-            System.out.println("Invalid PIN.");
-            attempts++;
-        }
-    } while (attempts <= 3);
-    
-    System.out.println("You have been locked out.");
-    return null;
-}
-
-//helper for name 
-Account getAccountByName(String name) {
-    for (int i = 0; i < count; i++) {
-        if (accounts[i].getName().equalsIgnoreCase(name)) {
-            return accounts[i];
-        }
-    }
-    return null;
-}
     
     public void loadFromFile(){
         try (BufferedReader br = new BufferedReader(new FileReader("accounts.txt"))) {
@@ -226,6 +228,59 @@ Account getAccountByName(String name) {
         } catch (IOException e) {
             System.out.println("Unable to save account data.");
 
+        }
+    }
+
+    // ================================================================
+    //  GUI OPTIMIZED OVERLOADS (NO SCANNER)
+    // ================================================================
+
+    public int createAccountGUI(String name, String birthDate, String pin, double initialBalance) {
+        // 1. Business Logic Rule: PIN must be 4 digits
+        if (!pin.matches("\\d{4}")) {
+            return -1; // Indicate failure
+        }
+
+
+        if (initialBalance < 0) {
+            return -1; // Indicate failure
+        }
+
+        if (!isEligible(birthDate)) {
+            return -1; // Indicate failure
+        }
+
+        int accNum = generateAccountNumber();
+
+        boolean added = addAccount(accNum, name, initialBalance, pin, birthDate);
+        
+        if (added) {
+            return accNum; // Return the new account number to the GUI
+        } else {
+            return -1; // Indicate failure
+        }
+    }
+
+    public Account loginGUI(String identifier, String pin) {
+        Account acc = null;
+        try {
+            int accNum = Integer.parseInt(identifier);
+            acc = getAccount(accNum); // Uses existing helper
+        } catch (NumberFormatException e) {
+            // Not a number, likely a name
+        }
+
+        if (acc == null) {
+            acc = getAccountByName(identifier); 
+        }
+        if (acc == null) {
+            return null; // Account not found
+        }
+
+        if (acc.getPin().equals(pin)) {
+            return acc; // Success
+        } else {
+            return null; // Incorrect PIN
         }
     }
 

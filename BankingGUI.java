@@ -1,5 +1,6 @@
-/* kapoy na kaayo ko WAHAHAHAHAHAHAHAHAHHA LISODA MAG FRONTEND PAG JAVA UY */
+/*Hello sir, I am fairly new to using jpanes and javax....admittedly I had to use AI to get these lines to work. I used the documentation and AI
 
+We also apologize for passing late*/
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
@@ -57,7 +58,8 @@ public class BankingGUI {
     //  AUTH WINDOW
     // ════════════════════════════════════════════════════════════════
     private void showAuthWindow() {
-        mainFrame = buildFrame("Banko C1ntral", 540, 700);
+        // Increase frame size for better visibility
+        mainFrame = buildFrame("NeoBank", 600, 780);
 
         JPanel root = new JPanel() {
             protected void paintComponent(Graphics g) {
@@ -76,19 +78,18 @@ public class BankingGUI {
         root.setLayout(new BorderLayout());
         root.setBackground(C_BG);
 
-        // Header
         JPanel header = new JPanel();
         header.setOpaque(false);
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         header.setBorder(new EmptyBorder(52, 0, 30, 0));
 
-        JLabel wordmark = new JLabel("BANKO C1NTRAL", SwingConstants.CENTER);
-        wordmark.setFont(new Font("Segoe UI", Font.BOLD, 30));
+        JLabel wordmark = new JLabel("NEOBANK", SwingConstants.CENTER);
+        wordmark.setFont(new Font("Segoe UI", Font.BOLD, 48));
         wordmark.setForeground(C_GOLD);
         wordmark.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel tagline = new JLabel("YOUR MONEY, ELEVATED", SwingConstants.CENTER);
-        tagline.setFont(new Font("Segoe UI", Font.PLAIN, 10));
+        tagline.setFont(new Font("Segoe UI", Font.PLAIN, 12)); 
         tagline.setForeground(C_MUTED);
         tagline.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -105,8 +106,8 @@ public class BankingGUI {
             }
         };
         divider.setOpaque(false);
-        divider.setMaximumSize(new Dimension(180, 1));
-        divider.setPreferredSize(new Dimension(180, 1));
+        divider.setMaximumSize(new Dimension(220, 1)); // slightly wider
+        divider.setPreferredSize(new Dimension(220, 1));
         divider.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         header.add(wordmark);
@@ -129,152 +130,168 @@ public class BankingGUI {
         mainFrame.setVisible(true);
     }
 
-// BankingGUI.java
+    // ── Login Panel ───────────────────────────────────────────────────
+    private JPanel buildLoginPanel() {
+        JPanel p = new JPanel() {
+            public Dimension getPreferredSize() { return new Dimension(400, super.getPreferredSize().height); }
+        };
+        p.setOpaque(false);
+        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+        p.setBorder(new EmptyBorder(28, 8, 28, 8));
 
-// ── Login Panel ───────────────────────────────────────────────────
-private JPanel buildLoginPanel() {
-    JPanel p = new JPanel() {
-        public Dimension getPreferredSize() { return new Dimension(300, super.getPreferredSize().height); }
-    };
-    p.setOpaque(false);
-    p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-    p.setBorder(new EmptyBorder(28, 8, 28, 8));
+        // Increase size of sub label
+        JLabel sub = mkLabel("Sign in to your account", 16, Font.PLAIN, C_MUTED);
+        sub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    JLabel sub = mkLabel("Sign in to your account", 16, Font.PLAIN, C_MUTED);
-    sub.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JTextField accField = modernField();
+        accField.setFont(new Font("Segoe UI", Font.PLAIN, 18)); // Increase input font size
+        accField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50)); // increase height
+        accField.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    JTextField accField = modernField();
-    accField.setAlignmentX(Component.CENTER_ALIGNMENT);
-    JPasswordField pinField = modernPassField();
-    pinField.setAlignmentX(Component.CENTER_ALIGNMENT);
-    JLabel errLabel = mkLabel("", 11, Font.PLAIN, C_RED);
-    errLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPasswordField pinField = modernPassField();
+        pinField.setFont(new Font("Segoe UI", Font.PLAIN, 18)); // Increase input font size
+        pinField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50)); // increase height
+        pinField.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    GoldButton loginBtn = new GoldButton("SIGN IN", null);
-    loginBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel errLabel = mkLabel("", 11, Font.PLAIN, C_RED);
+        errLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    // ************************************************************
-    // START OF UPDATED LOGIN LOGIC
-    // ************************************************************
-    loginBtn.addActionListener(e -> {
-        // Read the input as a String, since it could be Name OR Number now.
-        String userInput = accField.getText().trim();
-        String pin = new String(pinField.getPassword()).trim();
-        
-        // Basic validation
-        if (userInput.isEmpty() || pin.isEmpty()) { 
-            errLabel.setText("Please fill in all fields."); 
-            return; 
-        }
+        GoldButton loginBtn = new GoldButton("SIGN IN", null);
+        loginBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // --- Try Login by Account Number ---
-        Account acc = null;
-        try {
-            // First, try to interpret the input as an integer (Account Number)
-            int accNum = Integer.parseInt(userInput);
-            // If successful, search by account number
-            acc = manager.getAccount(accNum);
-        } catch (NumberFormatException ex) {
-            // If it's not a number, it's likely a name. Do nothing yet.
-        }
+        loginBtn.addActionListener(e -> {
+            String userInput = accField.getText().trim();
+            String pin = new String(pinField.getPassword()).trim();
+            
 
-  
-        if (acc == null) {
-            // Search by full name (requires the helper method added in Step 1)
-            acc = manager.getAccountByName(userInput);
-        }
+            if (userInput.isEmpty() || pin.isEmpty()) { 
+                errLabel.setText("Please fill in all fields."); 
+                return; 
+            }
 
-        // --- Handle Login Result ---
-        // At this point, if acc is still null, neither search worked.
-        if (acc == null) {
-            errLabel.setText("Account not found."); 
-            return; 
-        }
 
-        // Proceed with PIN validation
-        if (!acc.getPin().equals(pin)){ 
-            errLabel.setText("Incorrect PIN."); 
-            return; 
-        }
-        
-        // Successful login
-        loggedIn = acc;
-        mainFrame.dispose();
-        showDashboard();
-    });
+            Account acc = manager.loginGUI(userInput, pin); 
+            if (acc == null) {
+                errLabel.setText("Invalid credentials or account not found."); 
+                return; 
+            }
 
-    p.add(sub);
-    p.add(Box.createVerticalStrut(26));
-    JLabel accLbl = mkLabel("ACCOUNT NUMBER OR FULL NAME", 12, Font.BOLD, C_MUTED);
-    accLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-    // -------------------------------------------
-    
-    JLabel pinLbl = mkLabel("PIN", 12, Font.BOLD, C_MUTED); pinLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+            // Successful login 
+            loggedIn = acc;
+            mainFrame.dispose();
+            showDashboard();
+        });
+        // --------------------------------------
 
-    p.add(accLbl); p.add(Box.createVerticalStrut(6)); p.add(accField);
-    p.add(Box.createVerticalStrut(14));
-    p.add(pinLbl); p.add(Box.createVerticalStrut(6)); p.add(pinField);
-    p.add(Box.createVerticalStrut(10));
-    p.add(errLabel);
-    p.add(Box.createVerticalStrut(22));
-    p.add(loginBtn);
+        p.add(sub);
+        p.add(Box.createVerticalStrut(26));
 
-    return p;
-}
+        // Use custom sizes for labels on this specific screen
+        JLabel accLbl = mkLabel("ACCOUNT NUMBER OR FULL NAME", 12, Font.BOLD, C_MUTED);
+        accLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        JLabel pinLbl = mkLabel("PIN", 12, Font.BOLD, C_MUTED);
+        pinLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        p.add(accLbl); p.add(Box.createVerticalStrut(6)); p.add(accField);
+        p.add(Box.createVerticalStrut(14));
+        p.add(pinLbl); p.add(Box.createVerticalStrut(6)); p.add(pinField);
+        p.add(Box.createVerticalStrut(10));
+        p.add(errLabel);
+        p.add(Box.createVerticalStrut(22));
+        p.add(loginBtn);
+
+        return p;
+    }
 
     // ── Create Account Panel ──────────────────────────────────────────
     private JPanel buildCreateAccountPanel() {
         JPanel p = new JPanel() {
-            public Dimension getPreferredSize() { return new Dimension(300, super.getPreferredSize().height); }
+            public Dimension getPreferredSize() { return new Dimension(400, super.getPreferredSize().height); }
         };
         p.setOpaque(false);
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
         p.setBorder(new EmptyBorder(20, 8, 20, 8));
 
-        JTextField nameField  = modernField(); nameField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JTextField bdField    = modernField(); bdField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JPasswordField pinField = modernPassField(); pinField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JTextField balField   = modernField(); balField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Define larger inputs for this form
+        JTextField nameField  = modernField();
+        nameField.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        nameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        nameField.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JTextField bdField    = modernField();
+        bdField.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        bdField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        bdField.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JPasswordField pinField = modernPassField();
+        pinField.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        pinField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        pinField.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JTextField balField   = modernField();
+        balField.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        balField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        balField.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         JLabel statusLabel    = mkLabel("", 11, Font.PLAIN, C_GREEN);
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         GoldButton createBtn = new GoldButton("OPEN ACCOUNT", null);
         createBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // --- OPTIMIZED CREATE ACCOUNT BUTTON LOGIC ---
         createBtn.addActionListener(e -> {
+            // Read inputs from fields
             String name  = nameField.getText().trim();
             String bdate = bdField.getText().trim();
             String pin   = new String(pinField.getPassword()).trim();
             String balStr= balField.getText().trim();
+            
+            // GUI basic validation
             if (name.isEmpty() || bdate.isEmpty() || pin.isEmpty() || balStr.isEmpty()) {
                 statusLabel.setForeground(C_RED); statusLabel.setText("All fields are required."); return; }
-            if (!name.matches("[A-Za-z '\\-]+")) {
-                statusLabel.setForeground(C_RED); statusLabel.setText("Name: letters only."); return; }
-            try { LocalDate.parse(bdate); } catch (Exception ex) {
-                statusLabel.setForeground(C_RED); statusLabel.setText("Birthdate must be YYYY-MM-DD."); return; }
-            if (!manager.isEligible(bdate)) {
-                statusLabel.setForeground(C_RED); statusLabel.setText("Must be at least 18 years old."); return; }
-            if (!pin.matches("\\d{4}")) {
-                statusLabel.setForeground(C_RED); statusLabel.setText("PIN must be 4 digits."); return; }
+            
+            // Sanitization: Convert Balance String to double
             double bal;
-            try { bal = Double.parseDouble(balStr); if (bal < 0) throw new NumberFormatException(); }
+            try { bal = Double.parseDouble(balStr); }
             catch (NumberFormatException ex) {
                 statusLabel.setForeground(C_RED); statusLabel.setText("Invalid deposit amount."); return; }
 
-            int accNum = 100000 + (int)(Math.random() * 900000);
-            while (manager.getAccount(accNum) != null) accNum = 100000 + (int)(Math.random() * 900000);
-            manager.addAccount(accNum, name, bal, pin, bdate);
-            manager.saveToFile();
-            nameField.setText(""); bdField.setText(""); pinField.setText(""); balField.setText("");
-            statusLabel.setForeground(C_GREEN);
-            statusLabel.setText("Account #" + accNum + " created!");
-        });
+            // --- CALL THE LOGIC LAYER ---
+            // Pass the sanitized data to the logic method created in AccountManager
+            int newAccNum = manager.createAccountGUI(name, bdate, pin, bal);
+            // ------------------------------------
 
-        JLabel nameLbl = capsLabel("FULL NAME");               nameLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel bdLbl   = capsLabel("BIRTHDATE (YYYY-MM-DD)");  bdLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel pinLbl  = capsLabel("PIN");                     pinLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel balLbl  = capsLabel("INITIAL DEPOSIT (PHP)");   balLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+            // --- Handle Logic Result ---
+            if (newAccNum == -1) {
+                // If the logic returns -1, we know a business rule was broken (eligibility, PIN format, etc.)
+                statusLabel.setForeground(C_RED);
+                statusLabel.setText("Failed to create account. Check eligibility, PIN format, and balance.");
+            } else {
+                // Success
+                manager.saveToFile(); // Save the data (logic remains the same)
+                
+                // Clear the fields (GUI remains the same)
+                nameField.setText(""); bdField.setText(""); pinField.setText(""); balField.setText("");
+                statusLabel.setForeground(C_GREEN);
+                statusLabel.setText("Account #" + newAccNum + " created!");
+            }
+        });
+        // ----------------------------------------------
+
+        // Use custom sizes for labels on this specific screen
+        JLabel nameLbl = mkLabel("FULL NAME", 12, Font.BOLD, C_MUTED);
+        nameLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel bdLbl   = mkLabel("BIRTHDATE (YYYY-MM-DD)", 12, Font.BOLD, C_MUTED);
+        bdLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel pinLbl  = mkLabel("PIN", 12, Font.BOLD, C_MUTED);
+        pinLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel balLbl  = mkLabel("INITIAL DEPOSIT (PHP)", 12, Font.BOLD, C_MUTED);
+        balLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         p.add(nameLbl); p.add(Box.createVerticalStrut(6)); p.add(nameField);
         p.add(Box.createVerticalStrut(12));
@@ -295,7 +312,7 @@ private JPanel buildLoginPanel() {
     //  DASHBOARD
     // ════════════════════════════════════════════════════════════════
     private void showDashboard() {
-        mainFrame = buildFrame("Banko C1ntral — " + loggedIn.getName(), 960, 660);
+        mainFrame = buildFrame("NeoBank — " + loggedIn.getName(), 880, 580);
 
         JPanel root = new JPanel(new BorderLayout(0, 0));
         root.setBackground(C_BG);
@@ -325,7 +342,7 @@ private JPanel buildLoginPanel() {
         logoArea.setLayout(new BoxLayout(logoArea, BoxLayout.Y_AXIS));
         logoArea.setBorder(new EmptyBorder(30, 22, 22, 22));
         logoArea.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JLabel logo = mkLabel("BANKO C1NTRAL", 18, Font.BOLD, C_GOLD);
+        JLabel logo = mkLabel("NEOBANK", 18, Font.BOLD, C_GOLD);
         logo.setAlignmentX(Component.LEFT_ALIGNMENT);
         JLabel sub = mkLabel("Personal Banking", 10, Font.PLAIN, C_MUTED);
         sub.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -534,21 +551,29 @@ private JPanel buildLoginPanel() {
         JLabel ico = mkLabel("↑", 30, Font.BOLD, C_GREEN); ico.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel sub = mkLabel("Add money to your account", 12, Font.PLAIN, C_MUTED); sub.setAlignmentX(Component.CENTER_ALIGNMENT);
         JTextField amtField = modernField(); amtField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel amtLbl = capsLabel("AMOUNT (PHP)"); amtLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel amtLbl = mkLabel("AMOUNT (PHP)", 9, Font.BOLD, C_MUTED); amtLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel status = mkLabel("", 11, Font.PLAIN, C_GREEN); status.setAlignmentX(Component.CENTER_ALIGNMENT);
         GoldButton btn = new GoldButton("DEPOSIT FUNDS", C_GREEN); btn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // --- OPTIMIZED DEPOSIT BUTTON LOGIC ---
         btn.addActionListener(e -> {
             try {
+                // Read and sanitize input (GUI task)
                 double amt = Double.parseDouble(amtField.getText().trim());
                 if (amt <= 0) throw new NumberFormatException();
-                loggedIn.getTransactionManager().deposit(loggedIn, amt);
-                manager.saveToFile(); amtField.setText("");
+
+                loggedIn.getTransactionManager().deposit(loggedIn, amt); 
+                // ------------------------------------
+
+                // Finalize process (GUI task)
+                manager.saveToFile(); 
+                amtField.setText("");
                 status.setForeground(C_GREEN);
                 status.setText("✓ Deposited " + formatMoney(amt));
                 refreshOverview();
             } catch (NumberFormatException ex) { status.setForeground(C_RED); status.setText("Enter a valid positive amount."); }
         });
+        // ---------------------------------------
 
         card.add(ico); card.add(Box.createVerticalStrut(4));
         card.add(sub); card.add(Box.createVerticalStrut(28));
@@ -574,22 +599,33 @@ private JPanel buildLoginPanel() {
         JLabel ico = mkLabel("↓", 30, Font.BOLD, C_RED); ico.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel sub = mkLabel("Withdraw from your account", 12, Font.PLAIN, C_MUTED); sub.setAlignmentX(Component.CENTER_ALIGNMENT);
         JTextField amtField = modernField(); amtField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel amtLbl = capsLabel("AMOUNT (PHP)"); amtLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel amtLbl = mkLabel("AMOUNT (PHP)", 9, Font.BOLD, C_MUTED); amtLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel status = mkLabel("", 11, Font.PLAIN, C_RED); status.setAlignmentX(Component.CENTER_ALIGNMENT);
         GoldButton btn = new GoldButton("WITHDRAW FUNDS", C_RED); btn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // --- OPTIMIZED WITHDRAW BUTTON LOGIC ---
         btn.addActionListener(e -> {
             try {
+
                 double amt = Double.parseDouble(amtField.getText().trim());
                 if (amt <= 0) throw new NumberFormatException();
+
+ 
                 if (amt > loggedIn.getBalance()) { status.setForeground(C_RED); status.setText("Insufficient balance."); return; }
-                loggedIn.getTransactionManager().withdraw(loggedIn, amt);
-                manager.saveToFile(); amtField.setText("");
+
+
+                loggedIn.getTransactionManager().withdraw(loggedIn, amt); 
+                // ------------------------------------
+
+
+                manager.saveToFile(); 
+                amtField.setText("");
                 status.setForeground(C_GREEN);
                 status.setText("✓ Withdrew " + formatMoney(amt));
                 refreshOverview();
             } catch (NumberFormatException ex) { status.setForeground(C_RED); status.setText("Enter a valid positive amount."); }
         });
+        // ---------------------------------------
 
         card.add(ico); card.add(Box.createVerticalStrut(4));
         card.add(sub); card.add(Box.createVerticalStrut(28));
@@ -688,14 +724,14 @@ private JPanel buildLoginPanel() {
 
         JLabel ico = mkLabel("*", 32, Font.BOLD, C_GOLD); ico.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel title = mkLabel("Bank Statement", 16, Font.BOLD, C_TEXT); title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel sub = mkLabel("Exports a report to BankReport.txt", 11, Font.PLAIN, C_MUTED); sub.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel sub = mkLabel("Exports a report to your Downloads folder", 11, Font.PLAIN, C_MUTED); sub.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel status = mkLabel("", 11, Font.PLAIN, C_GREEN); status.setAlignmentX(Component.CENTER_ALIGNMENT);
         GoldButton btn = new GoldButton("EXPORT REPORT", null); btn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         btn.addActionListener(e -> {
             saveReport(loggedIn);
             status.setForeground(C_GREEN);
-            status.setText("✓ Saved to BankReport.txt");
+            status.setText("✓ Saved to Downloads/BankReport.txt");
         });
 
         card.add(ico); card.add(Box.createVerticalStrut(8));
@@ -862,7 +898,7 @@ private JPanel buildLoginPanel() {
         GoldButton(String text, Color bg) {
             super(text);
             this.overrideBg = bg;
-            setFont(new Font("Segoe UI", Font.BOLD, 11));
+            setFont(new Font("Segoe UI", Font.BOLD, 14)); // increased size
             setForeground(bg == null ? C_BG : Color.WHITE);
             setFocusPainted(false); setBorderPainted(false);
             setContentAreaFilled(false); setOpaque(false);
@@ -959,7 +995,6 @@ private JPanel buildLoginPanel() {
         JFrame f = new JFrame(title);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(w, h); f.setMinimumSize(new Dimension(w, h));
-        f.setResizable(false);
         f.setLocationRelativeTo(null);
         return f;
     }
@@ -970,12 +1005,6 @@ private JPanel buildLoginPanel() {
         JLabel l = new JLabel(t);
         l.setFont(new Font("Segoe UI", style, sz));
         l.setForeground(c);
-        return l;
-    }
-
-    private JLabel capsLabel(String text) {
-        JLabel l = mkLabel(text, 9, Font.BOLD, C_MUTED);
-        l.setAlignmentX(Component.LEFT_ALIGNMENT);
         return l;
     }
 
@@ -1037,8 +1066,21 @@ private JPanel buildLoginPanel() {
 
     private String formatMoney(double amount) { return String.format("PHP %,.2f", amount); }
 
+    /**
+     * Cross-platform getter for the user's Downloads folder.
+     */
+    private static String getDownloadPath() {
+        String userHome = System.getProperty("user.home");
+        // Combine home + Downloads + filename using platform-specific separator
+        return userHome + File.separator + "Downloads" + File.separator + "BankReport.txt";
+    }
+
+    // save report
     private void saveReport(Account acc) {
-        try (PrintWriter pw = new PrintWriter(new FileWriter("BankReport.txt"))) {
+        // Use the dynamic path
+        String reportPath = getDownloadPath();
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter(reportPath))) {
             pw.println("==============================");
             pw.println("         BANK REPORT          ");
             pw.println("==============================");

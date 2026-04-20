@@ -31,3 +31,4 @@ public class Transaction {
         return dateTime + " | " + type + " | PHP " + String.format("%.2f", amount);
     }
 }
+
